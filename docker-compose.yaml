@@ -3,7 +3,7 @@ version: '3'
 services:
 
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:${PROMETHEUS_VERSION}
     container_name: prometheus-container
     ports: 
       - 9090:9090
@@ -11,7 +11,7 @@ services:
       - default
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:${GRAFANA_VERSION}
     container_name: grafana-container
     ports: 
       - 3000:3000
