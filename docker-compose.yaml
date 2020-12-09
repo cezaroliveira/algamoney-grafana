@@ -7,14 +7,30 @@ services:
     container_name: prometheus-container
     ports: 
       - 9090:9090
+    volumes: 
+      - ./prometheus/config/:/etc/prometheus/
+      - prometheus_data:/var/lib/prometheus
     networks: 
       - default
 
   grafana:
     image: grafana/grafana:${GRAFANA_VERSION}
     container_name: grafana-container
+    depends_on:
+      - prometheus
     ports: 
       - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/config/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana/datasources/:/etc/grafana/provisioning/datasources/
+      - ./grafana/dashboards/config/:/etc/grafana/provisioning/dashboards/
+    # Necessario configurar o proxy no grafana dentro do docker
+    # environment: 
+    #   - GF_SECURITY_ADMIN_PASSWORD=admin
+    #   - "GF_INSTALL_PLUGINS=grafana-clock-panel 1.0.1,grafana-simple-json-datasource 1.3.5"
+    env_file:
+      - grafana/config/grafana.config
     networks: 
       - default
 
@@ -22,3 +38,7 @@ networks:
   default:
     external: 
       name: algamoney-network
+
+volumes:
+  prometheus_data:
+  grafana_data:
